@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-from routers import auth, profiles
+from routers import auth, profiles, briefs
 
 load_dotenv()
 
@@ -26,6 +26,7 @@ app.add_middleware(
 # Attach our specific feature routers to the main application
 app.include_router(auth.router, prefix="", tags=["Auth"])
 app.include_router(profiles.router, prefix="", tags=["Profiles"])
+app.include_router(briefs.router, prefix="", tags=["Briefs"])
 
 # A simple endpoint for deployment platforms (like Render) to verify the server is running
 @app.get("/health", tags=["System"])
