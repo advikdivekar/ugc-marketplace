@@ -23,10 +23,11 @@ app.add_middleware(
     allow_headers=["Content-Type", "Authorization"],
 )
 
+
 # Attach our specific feature routers to the main application
-app.include_router(auth.router, prefix="", tags=["Auth"])
-app.include_router(profiles.router, prefix="", tags=["Profiles"])
-app.include_router(briefs.router, prefix="", tags=["Briefs"])
+app.include_router(auth.router, prefix="")
+app.include_router(profiles.router, prefix="")
+app.include_router(briefs.router, prefix="")
 
 # A simple endpoint for deployment platforms (like Render) to verify the server is running
 @app.get("/health", tags=["System"])
