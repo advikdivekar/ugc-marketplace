@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from routers import auth, profiles, briefs, submissions
 
 load_dotenv()
+print("RUNNING FROM:", os.getcwd())
+print("SUPABASE URL LOADED:", os.getenv("SUPABASE_URL"))
 
 app = FastAPI(
     title="UGC Script Marketplace API",
