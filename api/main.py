@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
 # Import all our feature routers
-from routers import auth, profiles, briefs, submissions
+from routers import auth, profiles, briefs, submissions, payments
 
 load_dotenv()
 print("RUNNING FROM:", os.getcwd())
@@ -31,6 +31,7 @@ app.include_router(auth.router, prefix="")
 app.include_router(profiles.router, prefix="")
 app.include_router(briefs.router, prefix="")
 app.include_router(submissions.router, prefix="")
+app.include_router(payments.router, prefix="")
 
 @app.get("/health", tags=["System"])
 async def health():
