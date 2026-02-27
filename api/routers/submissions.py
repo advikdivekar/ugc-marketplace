@@ -27,3 +27,4 @@ async def get_my_submissions(current_user: dict = Depends(get_writer_user)):
     # Let writers see the status of all their applications
     response = supabase.table("submissions").select("*").eq("writer_id", current_user["user_id"]).execute()
     return response.data
+    
