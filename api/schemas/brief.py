@@ -1,3 +1,4 @@
+from datetime import datetime
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 from datetime import date
 from typing import Literal, Optional
@@ -24,11 +25,17 @@ class BriefCreate(BaseModel):
 class BriefStatusUpdate(BaseModel):
     status: Literal["open", "closed", "completed"]
 
-class BriefResponse(BriefCreate):
+class BriefResponse(BaseModel):
     id: str
     brand_id: str
+    title: str
+    description: str
+    budget: int
+    product_url: str
+    deadline: str
+    category: str
     status: str
-    created_at: str
-    
-    # Optional field to hold the brand's display name when we join tables
-    brand_name: Optional[str] = None
+    created_at: datetime # <-- THE FIX: Change this from str to datetime!
+
+    class Config:
+        from_attributes = True
