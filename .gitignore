@@ -1,11 +1,28 @@
-api/__pycache__/main.cpython-312.pyc
-api/dependencies/__pycache__/__init__.cpython-312.pyc
-api/dependencies/__pycache__/auth.cpython-312.pyc
-api/lib/__pycache__/__init__.cpython-312.pyc
-api/lib/__pycache__/supabase.cpython-312.pyc
-api/routers/__pycache__/__init__.cpython-312.pyc
-api/routers/__pycache__/auth.cpython-312.pyc
-api/routers/__pycache__/profiles.cpython-312.pyc
-api/schemas/__pycache__/__init__.cpython-312.pyc
-api/schemas/__pycache__/auth.cpython-312.pyc
-api/schemas/__pycache__/profile.cpython-312.pyc
+# --- Environment Variables ---
+.env
+.env.local
+.env.development
+.env.production
+!.env.example  # We explicitly tell Git to KEEP this one!
+
+# --- Python / Backend ---
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# --- Node.js / Frontend ---
+node_modules/
+npm-debug.log
+yarn-error.log
+dist/
+build/
+.next/
+
+# --- OS / IDE ---
+.DS_Store
+.vscode/
+.idea/
