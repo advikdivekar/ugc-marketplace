@@ -11,7 +11,7 @@ from models import *
 from lib.database import engine, Base
 
 # Import all our feature routers
-from routers import auth, briefs, submissions  #profiles, payments, earning, review
+from routers import auth, briefs, submissions, profiles  #payments, earning, review
 
 # This line tells SQLAlchemy: "Look at all the models I just imported, 
 # and create the actual tables in my Neon database."
@@ -35,8 +35,7 @@ app.add_middleware(
 
 # Connect all routes to the main application
 app.include_router(auth.router, prefix="")
-
-#app.include_router(profiles.router, prefix="")
+app.include_router(profiles.router, prefix="")
 app.include_router(briefs.router, prefix="")
 app.include_router(submissions.router, prefix="")
 #app.include_router(payments.router, prefix="")

@@ -1,39 +1,40 @@
-from fastapi import APIRouter, HTTPException, Depends, status
-from lib.supabase import supabase
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+
+from lib.database import get_db
+from models.profile import Profile
 from schemas.profile import ProfileUpdate, ProfileResponse
 from dependencies.auth import get_current_user
 
 router = APIRouter(prefix="/profiles", tags=["Profiles"])
 
 @router.get("/{user_id}", response_model=ProfileResponse)
-async def get_profile(user_id: str):
-    # Fetch profile by ID. This is public data so no auth dependency is required.
-    response = supabase.table("profiles").select("*").eq("id", user_id).execute()
+async def get_profile(user_id: str, db: Session = Depends(get_db)):
+    """Fetch a user's public profile"""
+    profile = db.query(Profile).filter(Profile.user_id == user_id).first()
     
-    if not response.data:
-        raise HTTPException(status_code=404, detail="Profile not found")
+    # If they haven't set up a profile yet, return an empty one instead of crashing
+    if not profile:
+        return {"user_id": user_id, "bio": None, "portfolio_url": None, "avatar_url": None}
         
-    return response.data[0]
+    return profile
 
-@router.patch("/{user_id}", response_model=ProfileResponse)
-async def update_profile(
-    user_id: str, 
-    data: ProfileUpdate, 
-    current_user: dict = Depends(get_current_user) # Requires a valid JWT
-):
-    # Enforce ownership: Users can only update their own profiles
-    if current_user["user_id"] != user_id:
-        raise HTTPException(status_code=403, detail="Not authorized to update this profile")
+@router.put("", response_model=ProfileResponse)
+async def update_profile(data: ProfileUpdate, current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
+    """A user updates their own profile"""
+    user_id = current_user["user_id"]
+    profile = db.query(Profile).filter(Profile.user_id == user_id).first()
     
-    # Drop None values so we only update the specific fields provided by the frontend
-    update_data = {k: v for k, v in data.model_dump().items() if v is not None}
-    
-    if not update_data:
-        raise HTTPException(status_code=400, detail="No valid fields to update")
-
-    response = supabase.table("profiles").update(update_data).eq("id", user_id).execute()
-    
-    if not response.data:
-        raise HTTPException(status_code=404, detail="Profile not found or update failed")
+    # If the profile doesn't exist yet, create it
+    if not profile:
+        profile = Profile(user_id=user_id, **data.model_dump(exclude_unset=True))
+        db.add(profile)
+    # If it does exist, update it
+    else:
+        if data.bio is not None: profile.bio = data.bio
+        if data.portfolio_url is not None: profile.portfolio_url = data.portfolio_url
+        if data.avatar_url is not None: profile.avatar_url = data.avatar_url
         
-    return response.data[0]
+    db.commit()
+    db.refresh(profile)
+    return profile
