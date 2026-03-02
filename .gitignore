@@ -25,4 +25,5 @@ build/
 # --- OS / IDE ---
 .DS_Store
 .vscode/
-.idea/
+.idea/secrets.txt
+secrets.txt
