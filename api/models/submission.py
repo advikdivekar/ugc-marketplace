@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, DateTime, ForeignKey, Enum
+from sqlalchemy import Column, String, Float, DateTime, ForeignKey, Enum
 from sqlalchemy.sql import func
 import enum
 import uuid
@@ -10,7 +10,7 @@ def generate_uuid():
 # Define the exact stages of a job application
 class SubmissionStatus(str, enum.Enum):
     pending = "pending"
-    accepted = "accepted"
+    approved = "approved"
     rejected = "rejected"
     paid = "paid"
 
@@ -24,8 +24,8 @@ class Submission(Base):
     writer_id = Column(String, ForeignKey("users.id"), nullable=False)
     
     # The application content
-    video_url = Column(String, nullable=False)
-    pitch = Column(String, nullable=False)
+    script_content = Column(String, nullable=False)
+    proposed_price = Column(Float, nullable=True)
     
     # Tracking the money/acceptance flow
     status = Column(Enum(SubmissionStatus), default=SubmissionStatus.pending, nullable=False)
