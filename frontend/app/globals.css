@@ -1,9 +1,8 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* =============================================
+   CLARIO DESIGN SYSTEM — globals.css
+   ============================================= */
 
 @theme inline {
   --color-background: var(--background);
@@ -12,15 +11,295 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  /* Core palette */
+  --background: #050505;
+  --foreground: #ffffff;
+  --color-brand: hsl(262 83% 58%);
+  --color-writer: hsl(322 81% 55%);
+  --color-accent-blue: #00f2ff;
+  --primary: #a855f7;
+  --accent-pink: #f15bb5;
+  --accent-cyan: #00f2ff;
+
+  /* Pastels */
+  --pastel-pink: #f5d0e3;
+  --pastel-coral: #f8d7cf;
+  --pastel-lavender: #d8dcf2;
+  --pastel-mint: #e2f0cb;
+
+  /* Utility */
+  --mauve: #c87aa9;
+  --indigo: #697ccc;
+  --gold: #ffb800;
+  --bg-light: #f8f9fa;
 }
+
+/* Global cursor override — custom cursor replaces default */
+* { cursor: none !important; }
+@media (pointer: coarse) {
+  * { cursor: auto !important; }
+}
+
+/* =============================================
+   BASE
+   ============================================= */
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Outfit', system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+/* =============================================
+   GLASSMORPHISM
+   ============================================= */
+
+.glass-card {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 2rem;
+  padding: 2rem;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.glass-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-5px) scale(1.01);
+}
+
+.glass-card-light {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 2rem;
+  padding: 2rem;
+  transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.glass-card-light:hover {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(0, 0, 0, 0.12);
+  transform: translateY(-5px) scale(1.01);
+}
+
+/* =============================================
+   PREMIUM BUTTON
+   ============================================= */
+
+.btn-premium {
+  padding: 1rem 2rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  font-size: 0.875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: linear-gradient(90deg, #00f2ff, #8b5cf6, #ec4899);
+  background-size: 200% auto;
+  color: #fff;
+  border: none;
+  transition: all 500ms cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+.btn-premium:hover {
+  transform: scale(1.05);
+  background-position: right center;
+  box-shadow: 0 0 30px rgba(0, 242, 255, 0.3), 0 0 60px rgba(139, 92, 246, 0.15);
+}
+
+.btn-white {
+  padding: 0.875rem 2rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  background: #fff;
+  color: #050505;
+  border: none;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-white:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 24px rgba(255, 255, 255, 0.15);
+}
+
+.btn-dark {
+  padding: 0.875rem 2rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.875rem;
+  background: #050505;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn-dark:hover {
+  transform: scale(1.05);
+  border-color: rgba(168, 85, 247, 0.5);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
+}
+
+/* =============================================
+   FORM STYLES
+   ============================================= */
+
+.form-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: #888;
+}
+
+.form-input {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.03);
+  color: #fff;
+  font-size: 0.9375rem;
+  transition: all 200ms;
+  outline: none;
+}
+.form-input:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+}
+.form-input::placeholder {
+  color: rgba(255,255,255,0.25);
+}
+
+.form-input-light {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(0,0,0,0.1);
+  background: #fff;
+  color: #050505;
+  font-size: 0.9375rem;
+  transition: all 200ms;
+  outline: none;
+}
+.form-input-light:focus {
+  border-color: #a855f7;
+  box-shadow: 0 0 0 3px rgba(168, 85, 247, 0.15);
+}
+
+/* =============================================
+   BADGE
+   ============================================= */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  padding: 0.375rem 0.875rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+/* =============================================
+   LOADING SPINNER
+   ============================================= */
+
+.spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 4px solid rgba(168, 85, 247, 0.2);
+  border-top: 4px solid #a855f7;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* =============================================
+   NOISE OVERLAY
+   ============================================= */
+
+.noise-bg {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* =============================================
+   SCROLLBAR
+   ============================================= */
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: #222; border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: #444; }
+
+/* =============================================
+   ANIMATIONS
+   ============================================= */
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.5); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+@keyframes slide-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Typing indicator */
+@keyframes bounce-dot {
+  0%, 80%, 100% { transform: scale(0); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* =============================================
+   SELECTION
+   ============================================= */
+
+::selection {
+  background: rgba(168, 85, 247, 0.3);
+  color: #fff;
+}
+
+/* =============================================
+   TAILWIND COMPONENT OVERRIDES
+   ============================================= */
+
+/* Override Clerk component styling */
+.cl-card {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 1.5rem !important;
+}
+
+.cl-formButtonPrimary {
+  background: linear-gradient(90deg, #a855f7, #f15bb5) !important;
+  border: none !important;
+  border-radius: 9999px !important;
+}
+
+.cl-formButtonPrimary:hover {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3) !important;
 }
