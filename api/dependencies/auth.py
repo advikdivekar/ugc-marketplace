@@ -23,6 +23,8 @@ async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(secur
     try:
         # Decode the token header to find which key signed it
         unverified_header = jwt.get_unverified_header(token)
+        print(f"DEBUG: Token Header: {unverified_header}")
+        
         jwks = get_clerk_jwks()
         
         rsa_key = {}
@@ -38,6 +40,7 @@ async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(secur
                 break
                 
         if not rsa_key:
+            print("DEBUG: No matching RSA key found in JWKS")
             raise HTTPException(status_code=401, detail="Invalid token signature")
 
         # Verify the token mathematically
@@ -47,25 +50,50 @@ async def verify_token(credentials: HTTPAuthorizationCredentials = Depends(secur
             algorithms=["RS256"],
             options={"verify_aud": False} 
         )
+        print(f"DEBUG: Token Payload: {payload}")
         return payload
         
     except jwt.ExpiredSignatureError:
+        print("DEBUG: Token Expired")
         raise HTTPException(status_code=401, detail="Token has expired")
-    except jwt.JWTError:
-        raise HTTPException(status_code=401, detail="Invalid authentication credentials")
+    except jwt.JWTError as e:
+        print(f"DEBUG: JWT Error: {str(e)}")
+        raise HTTPException(status_code=401, detail=f"Invalid authentication credentials: {str(e)}")
+    except Exception as e:
+        print(f"DEBUG: Unexpected Auth Error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error during authentication")
 
-async def get_current_user(payload: dict = Depends(verify_token)):
+from lib.database import get_db
+from models.user import User, UserRole
+from sqlalchemy.orm import Session
+
+async def get_current_user(payload: dict = Depends(verify_token), db: Session = Depends(get_db)):
     # Clerk stores the unique user ID in the 'sub' (subject) claim of the token
     user_id = payload.get("sub")
     if not user_id:
         raise HTTPException(status_code=401, detail="User ID not found in token")
     
-    return {"user_id": user_id}
+    # Check if user exists in database
+    db_user = db.query(User).filter(User.id == user_id).first()
+    if not db_user:
+        # In this app, users are created during onboarding. 
+        # If not found, they need to complete onboarding.
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Profile not finalized. Please complete onboarding.")
+    
+    return db_user
 
-# We will temporarily just pass the user through here. 
-# Once our database is wired up in the next step, we will add the role checks back!
-async def get_brand_user(user: dict = Depends(get_current_user)):
-    return user
+async def get_brand_user(user: User = Depends(get_current_user)):
+    if user.role != UserRole.brand:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Access denied. This action requires a Brand account."
+        )
+    return {"user_id": user.id, "email": user.email, "role": user.role}
 
-async def get_writer_user(user: dict = Depends(get_current_user)):
-    return user
+async def get_writer_user(user: User = Depends(get_current_user)):
+    if user.role != UserRole.writer:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN, 
+            detail="Access denied. This action requires a Writer account."
+        )
+    return {"user_id": user.id, "email": user.email, "role": user.role}
