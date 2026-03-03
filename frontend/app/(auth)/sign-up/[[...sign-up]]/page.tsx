@@ -4,7 +4,7 @@ import { SignUp } from "@clerk/nextjs";
 
 export default function SignUpPage() {
   return (
-    <div className="flex min-h-[90vh] items-center justify-center p-6"  style={{
+    <div className="flex min-h-[100vh] items-center justify-center p-6 bg-[#050505]" style={{
       background: 'linear-gradient(180deg, #050505 0%, #a855f7 100%)',
     }}>
       <SignUp
@@ -17,7 +17,7 @@ export default function SignUpPage() {
             colorInputText: 'white',
           },
           elements: {
-            formButtonPrimary: 
+            formButtonPrimary:
               "w-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500 py-3 font-semibold text-white hover:scale-105 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-all",
             card: "bg-black/80 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 glass-card",
             headerTitle: "text-2xl font-bold tracking-tight text-white",

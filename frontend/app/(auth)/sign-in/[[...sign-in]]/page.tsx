@@ -15,7 +15,7 @@ export default function SignInPage() {
             colorInputText: 'white',
           },
           elements: {
-            formButtonPrimary: 
+            formButtonPrimary:
               "w-full rounded-full bg-gradient-to-r from-purple-500 to-pink-500 py-3 font-semibold text-white hover:scale-105 hover:shadow-[0_0_20px_rgba(168,85,247,0.3)] transition-all",
             card: "bg-black/50 backdrop-blur-2xl border border-white/10 rounded-2xl p-8 glass-card",
             headerTitle: "text-2xl font-bold tracking-tight text-white",
@@ -33,6 +33,7 @@ export default function SignInPage() {
         routing="path"
         path="/sign-in"
       />
+      <div className="noise-bg pointer-events-none" aria-hidden="true" />
     </div>
   );
 }
