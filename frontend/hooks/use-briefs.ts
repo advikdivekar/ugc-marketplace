@@ -1,8 +1,10 @@
 import { useState, useCallback } from 'react';
-import { fetchAuth } from '../lib/api';
+import { useAuth } from '@clerk/nextjs';
+import { apiClient } from '../lib/api';
 import { Brief, BriefCreate } from '../types';
 
 export function useBriefs() {
+  const { getToken } = useAuth();
   const [briefs, setBriefs] = useState<Brief[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -11,31 +13,35 @@ export function useBriefs() {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchAuth('/api/briefs');
+      const token = await getToken() ?? undefined;
+      const data = await apiClient<Brief[]>('/briefs', { token });
       setBriefs(data);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch briefs.');
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getToken]);
 
   const fetchBriefById = useCallback(async (id: string): Promise<Brief | null> => {
     try {
-      return await fetchAuth(`/api/briefs/${id}`);
+      const token = await getToken() ?? undefined;
+      return await apiClient<Brief>(`/api/briefs/${id}`, { token });
     } catch (err: any) {
       setError(err.message || 'Failed to fetch brief details.');
       return null;
     }
-  }, []);
+  }, [getToken]);
 
   const createBrief = useCallback(async (data: BriefCreate) => {
     setLoading(true);
     setError(null);
     try {
-      const newBrief = await fetchAuth('/api/briefs', {
+      const token = await getToken() ?? undefined;
+      const newBrief = await apiClient<Brief>('/api/briefs', {
         method: 'POST',
         body: JSON.stringify(data),
+        token,
       });
       setBriefs((prev) => [newBrief, ...prev]);
       return newBrief;
@@ -45,7 +51,7 @@ export function useBriefs() {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [getToken]);
 
   return {
     briefs,

@@ -76,6 +76,10 @@ export interface SubmissionCreate {
     proposed_price?: number;
 }
 
+export interface SubmissionStatusUpdate {
+    status: SubmissionStatus;
+}
+
 // ─── Review ────────────────────────────────────
 export interface Review {
     id: string;
