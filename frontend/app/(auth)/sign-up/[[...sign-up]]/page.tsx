@@ -34,6 +34,7 @@ export default function SignUpPage() {
         }}
         routing="path"
         path="/sign-up"
+        forceRedirectUrl="/profile"
       />
       <div className="absolute inset-0 noise-bg mix-blend-overlay opacity-30 pointer-events-none" />
     </div>

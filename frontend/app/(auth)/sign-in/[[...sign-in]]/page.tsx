@@ -32,6 +32,7 @@ export default function SignInPage() {
         }}
         routing="path"
         path="/sign-in"
+        forceRedirectUrl="/profile"
       />
       <div className="noise-bg pointer-events-none" aria-hidden="true" />
     </div>

@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { BadgeDollarSign, Link as LinkIcon, Edit3, Target, LayoutDashboard, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useBriefs } from '../../../hooks/use-briefs';
+import { BriefCreate } from '../../../types';
 
 export default function CreateBriefPage() {
     const router = useRouter();
@@ -16,11 +18,23 @@ export default function CreateBriefPage() {
         target_audience: ''
     });
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const { createBrief, loading } = useBriefs();
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Usually calls your `useCreateBrief` hook
-        alert("Creation Flow: Connecting to Backend Endpoint...");
-        router.push('/dashboard/brand');
+        try {
+            const briefData: BriefCreate = {
+                ...formData,
+                script_format: formData.script_format as any,
+                industry: formData.industry as any,
+                budget: parseFloat(formData.budget) || 0,
+            };
+            await createBrief(briefData);
+            router.push('/dashboard/brand');
+        } catch (error: any) {
+            console.error(error);
+            alert(`Failed to create brief: ${error.message || "Unknown error"}. If you just signed in, try refreshing the page.`);
+        }
     };
 
     return (
@@ -141,8 +155,8 @@ export default function CreateBriefPage() {
 
                     {/* Submit Action */}
                     <div className="pt-6 relative z-10">
-                        <button type="submit" className="btn-premium w-full !py-4 text-[13px]">
-                            Publish Campaign
+                        <button type="submit" disabled={loading} className="btn-premium w-full !py-4 text-[13px] disabled:opacity-50">
+                            {loading ? 'Publishing...' : 'Publish Campaign'}
                         </button>
                         <p className="text-center text-xs text-gray-500 mt-4">
                             Your brief will instantly become available on the marketplace.
