@@ -2,20 +2,22 @@
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
-export async function apiClient<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
-    // Client-side: get token from Clerk
-    let token: string | undefined;
+export async function apiClient<T = unknown>(endpoint: string, options: RequestInit & { token?: string } = {}): Promise<T> {
+    const { token: manualToken, ...fetchOptions } = options;
 
-    if (typeof window !== 'undefined' && window.Clerk?.session) {
+    // Client-side fallback: get token from Clerk if not provided manually
+    let token = manualToken;
+
+    if (!token && typeof window !== 'undefined' && window.Clerk?.session) {
         token = await window.Clerk.session.getToken() ?? undefined;
     }
 
     const res = await fetch(`${API_BASE}${endpoint}`, {
-        ...options,
+        ...fetchOptions,
         headers: {
             'Content-Type': 'application/json',
             ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            ...options.headers,
+            ...fetchOptions.headers,
         },
     });
 
