@@ -10,21 +10,22 @@ export default function ProfileRedirecting() {
 
   useEffect(() => {
     if (isLoaded && user) {
-        // Quick dummy role check mimicking metadata
-       const role = "writer"; // user.publicMetadata.role as string;
-       if (role === 'brand') {
-         router.push('/dashboard/brand');
-       } else {
-         router.push('/profile/writer');
-       }
+      const role = user.publicMetadata?.role as string;
+      if (role === 'brand') {
+        router.push('/dashboard/brand');
+      } else if (role === 'writer') {
+        router.push('/dashboard/writer');
+      } else {
+        router.push('/onboarding');
+      }
     } else if (isLoaded && !user) {
-        router.push('/sign-in');
+      router.push('/sign-in');
     }
   }, [user, isLoaded, router]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#050505]">
-       <div className="spinner border-purple-500 w-10 h-10" />
+      <div className="spinner border-purple-500 w-10 h-10" />
     </div>
   );
 }
