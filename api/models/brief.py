@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, String, Integer, DateTime
+from sqlalchemy import Column, String, Integer, Float, DateTime
 from sqlalchemy.types import DateTime
 from sqlalchemy.sql import func
 from lib.database import Base
@@ -13,16 +13,13 @@ class Brief(Base):
 
     id = Column(String, primary_key=True, default=generate_uuid)
     brand_id = Column(String, nullable=False) 
-    title = Column(String, nullable=False)
-    
-    # 1. Renamed from 'content' to 'description'
-    description = Column(String, nullable=False) 
-    
-    # 2. Added the missing columns required by Pydantic
-    product_url = Column(String, nullable=False)
-    deadline = Column(String, nullable=False) # Storing as String (YYYY-MM-DD) for simplicity
-    category = Column(String, nullable=False)
+    product_name = Column(String, nullable=False)
+    product_url = Column(String, nullable=True)
+    brief_description = Column(String, nullable=False)
+    target_audience = Column(String, nullable=True)
+    creative_direction = Column(String, nullable=True)
+    script_format = Column(String, nullable=True)
+    industry = Column(String, nullable=True)
+    budget = Column(Float, nullable=False)
     status = Column(String, default="open")
-    
-    budget = Column(Integer, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())

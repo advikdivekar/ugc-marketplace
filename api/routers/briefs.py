@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
-from typing import List
+from typing import List, Optional
 
 from lib.database import get_db
 from models.brief import Brief
-from schemas.brief import BriefCreate, BriefResponse
-from dependencies.auth import get_brand_user
+from schemas.brief import BriefCreate, BriefResponse, BriefStatusUpdate
+from dependencies.auth import get_brand_user, get_current_user
 
 router = APIRouter(prefix="/briefs", tags=["Briefs"])
 
@@ -13,15 +13,16 @@ router = APIRouter(prefix="/briefs", tags=["Briefs"])
 async def create_brief(data: BriefCreate, current_user: dict = Depends(get_brand_user), db: Session = Depends(get_db)):
     """A brand creates a new job posting"""
     
-    # Unpack the validated data directly into the newly updated database model
     new_brief = Brief(
         brand_id=current_user["user_id"],
-        title=data.title,
-        description=data.description,
+        product_name=data.product_name,
+        product_url=str(data.product_url) if data.product_url else None,
+        brief_description=data.brief_description,
+        target_audience=data.target_audience,
+        creative_direction=data.creative_direction,
+        script_format=data.script_format,
+        industry=data.industry,
         budget=data.budget,
-        product_url=str(data.product_url), # <-- THE FIX: Convert HttpUrl object to a standard string!
-        deadline=str(data.deadline), 
-        category=data.category
     )
     
     db.add(new_brief)
@@ -30,7 +31,31 @@ async def create_brief(data: BriefCreate, current_user: dict = Depends(get_brand
     return new_brief
 
 @router.get("", response_model=List[BriefResponse])
-async def get_all_briefs(db: Session = Depends(get_db)):
-    """Anyone can view the open job board"""
-    briefs = db.query(Brief).all()
+async def get_all_briefs(brand_id: Optional[str] = None, db: Session = Depends(get_db)):
+    """List briefs. Optionally filter by brand_id."""
+    query = db.query(Brief)
+    if brand_id:
+        query = query.filter(Brief.brand_id == brand_id)
+    briefs = query.all()
     return briefs
+
+@router.get("/{brief_id}", response_model=BriefResponse)
+async def get_brief(brief_id: str, db: Session = Depends(get_db)):
+    """Get a single brief by ID"""
+    brief = db.query(Brief).filter(Brief.id == brief_id).first()
+    if not brief:
+        raise HTTPException(status_code=404, detail="Brief not found")
+    return brief
+
+@router.patch("/{brief_id}", response_model=BriefResponse)
+async def update_brief_status(brief_id: str, data: BriefStatusUpdate, current_user: dict = Depends(get_brand_user), db: Session = Depends(get_db)):
+    """Update a brief's status (close, fund, etc.)"""
+    brief = db.query(Brief).filter(Brief.id == brief_id).first()
+    if not brief:
+        raise HTTPException(status_code=404, detail="Brief not found")
+    if brief.brand_id != current_user["user_id"]:
+        raise HTTPException(status_code=403, detail="Not your brief")
+    brief.status = data.status
+    db.commit()
+    db.refresh(brief)
+    return brief
