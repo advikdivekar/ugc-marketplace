@@ -15,162 +15,8 @@ import {
   FileText,
   ShieldCheck,
   Sparkles,
-  Menu,
-  X,
 } from 'lucide-react';
-
-// ─── Navbar ─────────────────────────────────────
-function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navItems = [
-    {
-      label: 'Platform',
-      children: [
-        { label: 'Browse Briefs', href: '/briefs', desc: 'Explore open campaigns' },
-        { label: 'For Brands', href: '/dashboard/brand', desc: 'Manage your campaigns' },
-        { label: 'AI Analysis', href: '/analysis', desc: 'ROI & trend insights' },
-      ],
-    },
-    {
-      label: 'Solutions',
-      children: [
-        { label: 'Pricing', href: '/pricing', desc: 'Plans that scale with you' },
-        { label: 'Subscribe Pro', href: '/subscribe', desc: 'Unlock premium features' },
-        { label: 'Blueprint', href: '/blueprint', desc: 'See our roadmap' },
-      ],
-    },
-    {
-      label: 'Company',
-      children: [
-        { label: 'About', href: '/profile', desc: 'Our mission & methodology' },
-        { label: 'Contact', href: '/contact', desc: 'Enterprise & support' },
-      ],
-    },
-  ];
-
-  return (
-    <motion.nav
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.8, ease: [0.23, 1, 0.32, 1] }}
-      className={`fixed top-0 left-0 right-0 z-[9990] transition-all duration-500 ${scrolled
-          ? 'bg-black/60 backdrop-blur-2xl border-b border-white/[0.06]'
-          : 'bg-transparent'
-        }`}
-    >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-purple-500 to-pink-500">
-            <Sparkles size={16} className="text-white" />
-          </div>
-          <span className="text-lg font-bold tracking-tight text-white">Clario</span>
-        </Link>
-
-        {/* Desktop Nav */}
-        <div className="hidden items-center gap-1 lg:flex">
-          {navItems.map((item) => (
-            <div
-              key={item.label}
-              className="relative"
-              onMouseEnter={() => setActiveDropdown(item.label)}
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
-              <button className="flex items-center gap-1 rounded-full px-4 py-2 text-sm text-white/70 transition-colors hover:text-white">
-                {item.label}
-                <ChevronDown size={14} className={`transition-transform ${activeDropdown === item.label ? 'rotate-180' : ''}`} />
-              </button>
-
-              <AnimatePresence>
-                {activeDropdown === item.label && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                    transition={{ duration: 0.2 }}
-                    className="absolute left-0 top-full mt-2 w-64 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/10 p-2 shadow-2xl"
-                  >
-                    {item.children.map((child) => (
-                      <Link
-                        key={child.label}
-                        href={child.href}
-                        className="flex flex-col gap-0.5 rounded-xl px-4 py-3 transition-colors hover:bg-white/5"
-                      >
-                        <span className="text-sm font-medium text-white">{child.label}</span>
-                        <span className="text-xs text-white/40">{child.desc}</span>
-                      </Link>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          ))}
-        </div>
-
-        {/* CTA */}
-        <div className="hidden items-center gap-3 lg:flex">
-          <Link
-            href="/sign-in"
-            className="rounded-full px-5 py-2 text-sm font-medium text-white/70 transition-colors hover:text-white"
-          >
-            Sign In
-          </Link>
-          <Link href="/sign-up" className="btn-premium !py-2.5 !px-6 !text-xs">
-            Get Started
-          </Link>
-        </div>
-
-        {/* Mobile Toggle */}
-        <button
-          onClick={() => setMobileOpen(!mobileOpen)}
-          className="lg:hidden text-white"
-        >
-          {mobileOpen ? <X size={24} /> : <Menu size={24} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="lg:hidden bg-black/95 backdrop-blur-xl border-t border-white/5"
-          >
-            <div className="px-6 py-6 space-y-4">
-              {navItems.map((item) =>
-                item.children.map((child) => (
-                  <Link
-                    key={child.label}
-                    href={child.href}
-                    className="block text-sm text-white/70 hover:text-white transition-colors"
-                    onClick={() => setMobileOpen(false)}
-                  >
-                    {child.label}
-                  </Link>
-                ))
-              )}
-              <div className="pt-4 border-t border-white/10 flex flex-col gap-3">
-                <Link href="/sign-in" className="text-sm text-white/70">Sign In</Link>
-                <Link href="/sign-up" className="btn-premium text-center !py-3">Get Started</Link>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.nav>
-  );
-}
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 
 // ─── Floating Shapes ────────────────────────────
 function FloatingShapes() {
@@ -322,8 +168,6 @@ export default function LandingPage() {
 
   return (
     <>
-      <Navbar />
-
       {/* ═══ HERO ═══ */}
       <section
         ref={heroRef}
@@ -613,7 +457,7 @@ export default function LandingPage() {
               {
                 title: 'Company',
                 links: [
-                  { label: 'About', href: '/profile' },
+                  { label: 'About', href: '/' },
                   { label: 'Pricing', href: '/pricing' },
                   { label: 'Contact', href: '/contact' },
                 ],
